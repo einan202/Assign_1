@@ -16,6 +16,7 @@ Virus::Virus(int nodeInd) : Agent(), nodeInd(nodeInd){}
 void Virus::act(Session &session)
 {
     if (!session.getDone()->at(session.index)) {
+        bool act = false;
         Graph *graph = session.getGraph();
         int node = this->nodeInd;
         int status = graph->vecs.at(node);
@@ -25,8 +26,11 @@ void Virus::act(Session &session)
             if (toInfect != -1)
             {
                 const Agent *a = new Virus(toInfect);
+                graph->vecs.at(toInfect) = 1;
                 session.addAgent(*a);
                 session.getDone()->push_back(false);
+                session.getDone()->at(session.index) = false;
+                act = true;
             }
             status++;
         }
@@ -34,12 +38,33 @@ void Virus::act(Session &session)
         if (status == 1) {
             graph->vecs.at(node) = 2;
             session.enqueueInfected(node);
+            if(!act) {
+                int toInfect = session.toInfect(node);
+                if (toInfect != -1) {
+                    const Agent *a = new Virus(toInfect);
+                    graph->infectNode(toInfect);
+                    session.addAgent(*a);
+                    session.getDone()->push_back(false);
+                    session.getDone()->at(session.index) = false;
+                    act = true;
+                }
+            }
             status++;
         }
-        if (status == 2) {
-            bool ans = graph->infectNextNode(node);
-            if (!ans)
-                session.getDone()->at(session.index) = true;
+        if (status == 2)  {
+           if(!act) {
+               int toInfect = session.toInfect(node);
+               if (toInfect == -1)
+                   session.getDone()->at(session.index) = true;
+               else
+               {
+                   const Agent *a = new Virus(toInfect);
+                   graph->infectNode(toInfect);
+                   session.addAgent(*a);
+                   session.getDone()->push_back(false);
+                   session.getDone()->at(session.index) = false;
+               }
+           }
         }
     }
 }
@@ -63,8 +88,11 @@ void ContactTracer::act(Session &session)
     if(!session.getInfected()->empty()){
         int node=session.dequeueInfected();
         Tree *tree=session.getGraph()->BFS(session,node);
-        int disconnected = tree->traceTree();
-        session.getGraph()->removeNodeEdges(disconnected);
+        if (tree->getRank() != 0) {
+            int disconnected = tree->traceTree();
+            session.getGraph()->removeNodeEdges(disconnected);
+            session.getDone()->at(session.index) = false;
+        }
     }
     else
         session.getDone()->at(session.index) = true;

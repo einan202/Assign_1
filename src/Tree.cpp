@@ -8,6 +8,7 @@ using namespace std;
 Tree::Tree(int rootLabel): node(rootLabel), rank(0), depth(0), children() {}
 
 Tree::~Tree()
+
 {
     clear();
 }
@@ -102,12 +103,12 @@ vector<Tree *> *Tree::getChildren()
     return &children;
 }
 
-int Tree::getRank()
+int &Tree::getRank()
 {
     return rank;
 }
 
-int Tree::getDepth()
+int &Tree::getDepth()
 {
     return depth;
 }
@@ -119,9 +120,11 @@ void Tree::updateDepthsBFS()
     while(!q.empty()){
         Tree* curr = q.front(); q.pop();
         unsigned int count = curr->getChildren()->size();
-        for (unsigned int i = 0; i < count; ++i)
-            q.push(curr->getChildren()->at(i));
-        curr->depth++;
+        for (unsigned int i = 0; i < count; ++i){
+            Tree* child = curr->getChildren()->at(i);
+            q.push(child);
+        }
+        curr->getDepth()++;
     }
 }
 
@@ -190,42 +193,57 @@ int CycleTree::traceTree() {// if 0 - root, else go-left currCycle times
     }
 
 //==========================MaxRankTree=====================================
-    MaxRankTree::MaxRankTree(int rootLabel):Tree(rootLabel){}
+MaxRankTree::MaxRankTree(int rootLabel):Tree(rootLabel){}
 
-    Tree *MaxRankTree::clone() const {
+Tree *MaxRankTree::clone() const
+{
         return (new MaxRankTree(*this));
-    }
+}
 
-int MaxRankTree::traceTree() {
-    vector<Tree*> sameRank;
-    Tree *maxRank=this;
-    Tree* min;
-    sameRank.push_back(maxRank);
-    unsigned int treeSize = getSizeBFS();
-    while(treeSize > 0) {
-        unsigned int count = children.size();
-        for (unsigned int i = 0; i < count; ++i) {
-            Tree *curr = children.at(i);
-            if (curr->getRank() > maxRank->getRank()) {
-                maxRank = curr;
-                sameRank.clear();
-                sameRank.push_back(maxRank);
-            }
-            if (curr->getRank() == maxRank->getRank())
-                sameRank.push_back(curr);
+
+void MaxRankTree::updateSameRankBFS(vector<Tree*> *sameRank)
+{
+    int maxRank = sameRank->at(0)->getRank();
+    queue<Tree*> q;
+    q.push(this);
+    while(!q.empty()){
+        Tree* curr = q.front(); q.pop();
+        if(curr->getRank() >= maxRank)
+        {
+          if(curr->getRank() > maxRank) {
+              sameRank->clear();
+              maxRank = curr->getRank();
+          }
+          if(curr->getNode() != getNode())
+              sameRank->push_back(curr);
         }
-        if (sameRank.size() == 1)
-            return maxRank->getNode();
-        min = sameRank[0];
+        unsigned int count=curr->getChildren()->size();
+        for (unsigned int i = 0; i < count; ++i)
+            q.push(curr->getChildren()->at(i));
+    }
+}
+
+int MaxRankTree::traceTree()
+{
+    vector<Tree*> sameRank;
+    sameRank.push_back(this);
+    updateSameRankBFS(&sameRank);
+    if(sameRank.size() == 1)
+        return sameRank.at(0)->getNode();
+    else
+    {
+        Tree* min = sameRank.at(0);
         for (auto &k : sameRank) {
             if (min->getDepth() > k->getDepth())
                 min = k;
-            if (min->getDepth() == k->getDepth()) {
+            else if (min->getDepth() == k->getDepth()) {
                 if (min->getNode() > k->getNode())
                     min = k;
             }
         }
-        treeSize--;
+        return min->getNode();
     }
-    return min->getNode();
+//        treeSize--;
+//    }
+//    return min->getNode();
 }

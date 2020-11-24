@@ -78,38 +78,28 @@ Tree *Graph::BFS(Session &s, int node)
     queue<Tree*> nodes;
     nodes.push(bfsTree);
     visited.at(node) = true;
-    while(!nodes.empty()) {
+    while(!nodes.empty())
+    {
         currT = nodes.front();
         nodes.pop();
         int currNode = currT->getNode();
-        if (currNode == node) {
-            unsigned int amountOfNodes = g->getEdges().at(node).size();
-            for (unsigned int i = 0; i < amountOfNodes; ++i) {
-                int neighbor = edges.at(node).at(i);
-                if (neighbor != node && !visited.at(neighbor)) {
-                    Tree *child = Tree::createTree(s, neighbor);
-                    //child->getDepth() = bfsTree->getDepth() + 1;
-                    bfsTree->addChild(child);
-                    //bfsTree->getRank()++;
-                    visited.at(neighbor) = true;
-                    nodes.push(child);
-                }
-            }
-        }
-
-        else {
-            unsigned int amountOfNodes = g->getEdges().at(currNode).size();
-            for (unsigned int i = 0; i < amountOfNodes; ++i) {
-                int neighbor = edges.at(currNode).at(i);
-                if (neighbor != node && !visited.at(neighbor)) {
-                    Tree *child = Tree::createTree(s, neighbor);
-//                    child->getDepth() = currT->getDepth()+ 1;
-                    currT->addChild(child);
-//                    currT->getRank()++;
-                    visited.at(neighbor) = true;
-                    nodes.push(child);
-                }
-            }
+        unsigned int amountOfNodes = g->getEdges().at(currNode).size();
+        for (unsigned int i = 0; i < amountOfNodes; ++i)
+        {
+             int neighbor = edges.at(currNode).at(i);
+             if (neighbor != node && !visited.at(neighbor))
+             {
+                 Tree *child = Tree::createTree(s, neighbor);
+                 if (currNode == node)
+                     bfsTree->addChild(child);
+                 else
+                 {
+                     child->getDepth() = currT->getDepth();
+                     currT->addChild(child);
+                 }
+                 visited.at(neighbor) = true;
+                 nodes.push(child);
+             }
         }
     }
     return bfsTree;

@@ -44,12 +44,20 @@ void Session::simulate() {
 
         bool check = true;
         count = done.size();
-        for (int k = 0; k < count && check; ++k) {
+        for (int k = 0; (k < count) & check; ++k) {
             if (!done.at(k))
                 check = false;
         }
-        if (check)
-            terminated = true;
+
+      if (check) {
+        int size = g.vecs.size();
+        for (int a = 0; (a < size) & (check); ++a) {
+            if(g.vecs.at(a) == 1)
+                check = false;
+        }
+      }
+
+        terminated = check;
     }
     makeOutput();
 }
@@ -206,16 +214,13 @@ vector<Agent *> Session::getAgents()
 
 int Session::toInfect(int father)
 {
-    bool output = false;
     int toInfect = -1;
-    unsigned int fatherEdgesSize = getGraph()->getEdges().at(father).size();
-    for (unsigned int i = 0; (i < fatherEdgesSize) & !output; ++i) {
-        int neighbor = getGraph()->getEdges().at(father).at(i);
+    unsigned int fatherEdgesSize = g.getEdges().at(father).size();
+    for (unsigned int i = 0; (i < fatherEdgesSize) & toInfect == -1; ++i) {
+        int neighbor = g.getEdges().at(father).at(i);
         int status = getGraph()->vecs.at(neighbor);
-        if (status == 0) {
+        if (status == 0)
             toInfect = neighbor;
-            output = true;
-        }
     }
     return toInfect;
 }

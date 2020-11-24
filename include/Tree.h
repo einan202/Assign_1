@@ -26,8 +26,8 @@ public:
     int getSizeBFS();
 
     int getNode() const;
-    int getRank();
-    int getDepth();
+    int& getRank();
+    int& getDepth();
     vector<Tree*> *getChildren();
 
 protected:
@@ -56,6 +56,7 @@ public:
     virtual int traceTree();
     virtual Tree *clone() const;
     virtual ~MaxRankTree() = default;
+    void updateSameRankBFS(vector<Tree*> *sameRank);
 };
 
 class RootTree: public Tree{
