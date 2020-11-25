@@ -3,12 +3,42 @@
 #include <iostream>
 using namespace std;
 
-//==========================Tree=========================
+//============================Tree========================================
 
 Tree::Tree(int rootLabel): node(rootLabel), rank(0), depth(0), children() {}
 
-Tree::~Tree()
+Tree * Tree::createTree(const Session &session, int rootLabel)
+{
+    Tree *p;
+    TreeType tType = session.getTreeType();
+    if(tType==MaxRank)
+        p = new MaxRankTree(rootLabel);
+    if(tType==Cycle)
+        p = new CycleTree(rootLabel,0);
+    if(tType==Root)
+        p = new RootTree(rootLabel);
+    return p;
+}
 
+void Tree::addChild(const Tree &child)
+{
+    Tree* copy = child.clone();
+    addChild(copy);
+}
+
+void Tree::addChild(Tree *child)
+{
+    children.push_back(child);
+    child->updateDepthsBFS();
+    rank++;
+}
+
+int Tree::getNode() const
+{
+    return node;
+}
+
+Tree::~Tree()
 {
     clear();
 }
@@ -54,48 +84,17 @@ Tree &Tree::operator=(Tree &&other) {
     return *this;
 }
 
+Tree::Tree(Tree &&other):
+  node(other.node), rank(other.rank), depth(other.depth), children(move(other.children))
+{
+    steal(other);
+}
+
 void Tree::steal(Tree &other)
 {
     unsigned int count=other.children.size();
     for(unsigned int i = 0; i<count; i++)
         children.at(i) = nullptr;
-}
-
-Tree * Tree::createTree(const Session &session, int rootLabel)
-{
-    Tree *p;
-    TreeType tType = session.getTreeType();
-    if(tType==MaxRank)
-        p = new MaxRankTree(rootLabel);
-    if(tType==Cycle)
-        p = new CycleTree(rootLabel,0);
-    if(tType==Root)
-        p = new RootTree(rootLabel);
-    return p;
-}
-
-void Tree::addChild(const Tree &child)
-{
-    Tree* copy = child.clone();
-    addChild(copy);
-}
-
-void Tree::addChild(Tree *child)
-{
-    children.push_back(child);
-    child->updateDepthsBFS();
-    rank++;
-}
-
-int Tree::getNode() const
-{
-    return node;
-}
-
-Tree::Tree(Tree &&other):
-  node(other.node), rank(other.rank), depth(other.depth), children(move(other.children))
-{
-    steal(other);
 }
 
 vector<Tree *> *Tree::getChildren()
@@ -145,27 +144,6 @@ void Tree::updateCyclesBFS(int cycle)
     }
 }
 
-int& MaxRankTree::getCurrCycle() {
-    int i = -1;
-    int* p = &i;
-    return *p;
-}
-
-//int Tree::getSizeBFS()
-//{
-//    int size = 0;
-//    queue<Tree*> q;
-//    q.push(this);
-//    while(!q.empty()){
-//        Tree* curr = q.front(); q.pop();
-//        unsigned int count=curr->getChildren()->size();
-//        for (unsigned int i = 0; i < count; ++i)
-//            q.push(curr->getChildren()->at(i));
-//        size= size + 1;
-//    }
-//    return size;
-//}
-
 Tree::Tree(const Tree &other):
      node(other.node), rank(other.rank), depth(other.depth), children()
 {
@@ -179,29 +157,26 @@ Tree::Tree(const Tree &other):
 
 RootTree::RootTree(int rootLabel):Tree(rootLabel){}
 
-Tree * RootTree::clone() const
-{
-    return (new RootTree(*this));
-}
-
 int RootTree::traceTree()
 {
     return node;
 }
 
-int& RootTree::getCurrCycle() {
-    int i = -1;
-    int* p = &i;
+Tree * RootTree::clone() const
+{
+    return (new RootTree(*this));
+}
+
+int& RootTree::getCurrCycle()
+{
+    int fakeC = -1;
+    int* p = &fakeC;
     return *p;
 }
+
 //==========================CycleTree=====================================
 
 CycleTree::CycleTree(int rootLabel, int currCycle):Tree(rootLabel),currCycle(currCycle){}
-
-Tree * CycleTree::clone() const
-{
-    return (new CycleTree(*this));
-}
 
 int CycleTree::traceTree() {
     int output = node;
@@ -214,6 +189,10 @@ int CycleTree::traceTree() {
     return output;
 }
 
+Tree * CycleTree::clone() const
+{
+    return (new CycleTree(*this));
+}
 
 int& CycleTree::getCurrCycle()
 {
@@ -223,33 +202,6 @@ int& CycleTree::getCurrCycle()
 //==========================MaxRankTree=====================================
 
 MaxRankTree::MaxRankTree(int rootLabel):Tree(rootLabel){}
-
-Tree *MaxRankTree::clone() const
-{
-        return (new MaxRankTree(*this));
-}
-
-void MaxRankTree::updateSameRankBFS(vector<Tree*> *sameRank)
-{
-    int maxRank = sameRank->at(0)->getRank();
-    queue<Tree*> q;
-    q.push(this);
-    while(!q.empty()){
-        Tree* curr = q.front(); q.pop();
-        if(curr->getRank() >= maxRank)
-        {
-          if(curr->getRank() > maxRank) {
-              sameRank->clear();
-              maxRank = curr->getRank();
-          }
-          if(curr->getNode() != getNode())
-              sameRank->push_back(curr);
-        }
-        unsigned int count=curr->getChildren()->size();
-        for (unsigned int i = 0; i < count; ++i)
-            q.push(curr->getChildren()->at(i));
-    }
-}
 
 int MaxRankTree::traceTree()
 {
@@ -271,4 +223,38 @@ int MaxRankTree::traceTree()
         }
         return min->getNode();
     }
+}
+
+void MaxRankTree::updateSameRankBFS(vector<Tree*> *sameRank)
+{
+    int maxRank = sameRank->at(0)->getRank();
+    queue<Tree*> q;
+    q.push(this);
+    while(!q.empty()){
+        Tree* curr = q.front(); q.pop();
+        if(curr->getRank() >= maxRank)
+        {
+            if(curr->getRank() > maxRank) {
+                sameRank->clear();
+                maxRank = curr->getRank();
+            }
+            if(curr->getNode() != getNode())
+                sameRank->push_back(curr);
+        }
+        unsigned int count=curr->getChildren()->size();
+        for (unsigned int i = 0; i < count; ++i)
+            q.push(curr->getChildren()->at(i));
+    }
+}
+
+Tree *MaxRankTree::clone() const
+{
+    return (new MaxRankTree(*this));
+}
+
+int& MaxRankTree::getCurrCycle()
+{
+    int fakeC = -1;
+    int* p = &fakeC;
+    return *p;
 }

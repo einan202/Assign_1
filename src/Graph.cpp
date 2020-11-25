@@ -3,6 +3,8 @@
 #include "../include/Tree.h"
 using namespace std;
 
+//====================Graph==========================
+
 Graph:: Graph(vector<vector<int>> matrix):
     vecs(vector<int>()), edges(vector<vector<int>>())
 {
@@ -35,39 +37,6 @@ vector<vector<int>> Graph::getEdges() const
     return edges;
 }
 
-void Graph::removeNodeEdges(int toRemove)
-{
-    int mainSize = edges.size();
-    for (int i = 0; i < mainSize; ++i) {
-             if(i == toRemove)
-                 edges.at(i).clear();
-             else {
-                vector<int> updated;
-                 unsigned int innerSize = edges.at(i).size();
-                for (unsigned int j = 0; j < innerSize; ++j) {
-                    if(edges.at(i).at(j) != toRemove)
-                        updated.push_back(edges.at(i).at(j));
-                }
-                edges.at(i) = vector<int>(updated);
-             }
-    }
-}
-
-//bool Graph::infectNextNode(int father)
-//{
-//   bool output = false;
-//   unsigned int fatherEdgesSize = edges.at(father).size();
-//   for (unsigned int i = 0; (i < fatherEdgesSize) & !output; ++i) {
-//        int neighbor = edges.at(father).at(i);
-//        int status = vecs.at(neighbor);
-//        if (status == 0) {
-//            infectNode(neighbor);
-//            output = true;
-//        }
-//   }
-//   return output;
-//}
-
 Tree *Graph::BFS(Session &s, int node)
 {
     Tree *bfsTree = Tree::createTree(s,node);
@@ -85,23 +54,42 @@ Tree *Graph::BFS(Session &s, int node)
         unsigned int amountOfNodes = g->getEdges().at(currNode).size();
         for (unsigned int i = 0; i < amountOfNodes; ++i)
         {
-             int neighbor = edges.at(currNode).at(i);
-             if (neighbor != node && !visited.at(neighbor))
-             {
-                 child = Tree::createTree(s, neighbor);
-                 if (currNode == node)
-                     bfsTree->addChild(child);
-                 else
-                 {
-                     child->getDepth() = currT->getDepth();
-                     currT->addChild(child);
-                 }
-                 visited.at(neighbor) = true;
-                 nodes.push(child);
-             }
+            int neighbor = edges.at(currNode).at(i);
+            if (neighbor != node && !visited.at(neighbor))
+            {
+                child = Tree::createTree(s, neighbor);
+                if (currNode == node)
+                    bfsTree->addChild(child);
+                else
+                {
+                    child->getDepth() = currT->getDepth();
+                    currT->addChild(child);
+                }
+                visited.at(neighbor) = true;
+                nodes.push(child);
+            }
         }
     }
     return bfsTree;
+}
+
+void Graph::removeNodeEdges(int toRemove)
+{
+    int mainSize = edges.size();
+    for (int i = 0; i < mainSize; ++i) {
+             if(i == toRemove)
+                 edges.at(i).clear();
+             else
+             {
+                vector<int> updated;
+                unsigned int innerSize = edges.at(i).size();
+                for (unsigned int j = 0; j < innerSize; ++j) {
+                    if(edges.at(i).at(j) != toRemove)
+                        updated.push_back(edges.at(i).at(j));
+                }
+                edges.at(i) = vector<int>(updated);
+             }
+    }
 }
 
 Graph::Graph(const Graph &other) : vecs(other.vecs), edges(other.edges) {}

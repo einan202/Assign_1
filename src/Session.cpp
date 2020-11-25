@@ -6,6 +6,8 @@
 using namespace std;
 using namespace nlohmann;
 
+//========================Session===============================
+
 Session::Session(const std::string& path):
    done(),index(0), g(vector<vector<int>>()),treeType(), agents(),
      simulateCycle(0), terminated(false),infectedNode()
@@ -62,11 +64,6 @@ void Session::simulate() {
     makeOutput();
 }
 
-int& Session::getSimulateCycle()
-{
-    return simulateCycle;
-}
-
 void Session::addAgent(const Agent &agent)
 {
     Agent *toAdd=agent.clone();
@@ -85,24 +82,34 @@ int Session::dequeueInfected()
     return output;
 }
 
-Graph *Session::getGraph()
-{
-    return &g;
-}
-
 void Session::setGraph(const Graph &graph)
 {
     g = Graph(graph);
 }
 
-std::vector<bool> * Session::getDone()
+Graph *Session::getGraph()
 {
-    return &done;
+    return &g;
 }
 
 TreeType Session::getTreeType() const
 {
     return treeType;
+}
+
+vector<Agent *> Session::getAgents()
+{
+    return agents;
+}
+
+int& Session::getSimulateCycle()
+{
+    return simulateCycle;
+}
+
+std::vector<bool> * Session::getDone()
+{
+    return &done;
 }
 
 queue<int> * Session::getInfected()
@@ -115,15 +122,19 @@ Session::~Session()
     clear();
 }
 
-void Session::steal(Session &other)
+void Session::clear()
 {
     unsigned int size = agents.size();
     for (unsigned int i = 0; i < size; ++i) {
-        agents.at(i) = nullptr;
+        if (agents.at(i) != nullptr) {
+            delete (agents.at(i));
+            agents.at(i) = nullptr;
+        }
     }
 }
 
-Session & Session::operator=(const Session &other) {
+Session & Session::operator=(const Session &other)
+{
     if(this!=&other) {
         clear();
         treeType = other.treeType;
@@ -161,14 +172,11 @@ Session & Session::operator=(Session &&other)
     return *this;
 }
 
-void Session::clear()
+void Session::steal(Session &other)
 {
     unsigned int size = agents.size();
     for (unsigned int i = 0; i < size; ++i) {
-        if (agents.at(i) != nullptr) {
-            delete (agents.at(i));
-            agents.at(i) = nullptr;
-        }
+        agents.at(i) = nullptr;
     }
 }
 
@@ -210,11 +218,6 @@ std::vector<std::vector<int>> Session::outputGraph()
         }
     }
     return output;
-}
-
-vector<Agent *> Session::getAgents()
-{
-    return agents;
 }
 
 int Session::toInfect(int father)

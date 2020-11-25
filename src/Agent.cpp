@@ -4,12 +4,12 @@
 #include <iostream>
 using namespace std;
 
-/*----------Agent------------*/
+//=================Agent===================
 
 Agent::Agent() {}
 Agent::~Agent() {}
 
-/*----------Virus------------*/
+//=================Virus===================
 
 Virus::Virus(int nodeInd) : Agent(), nodeInd(nodeInd){}
 
@@ -72,17 +72,17 @@ void Virus::act(Session &session)
     }
 }
 
-Agent *Virus::clone() const
-{
-    return (new Virus(*this));
-}
-
 int Virus::getNodeInd() const
 {
     return nodeInd;
 }
 
-/*------Contact Tracer--------*/
+Agent *Virus::clone() const
+{
+    return (new Virus(*this));
+}
+
+//=================Contact Tracer===================
 
 ContactTracer::ContactTracer() : Agent() {}
 
