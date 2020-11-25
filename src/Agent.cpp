@@ -31,6 +31,7 @@ void Virus::act(Session &session)
                 session.getDone()->push_back(false);
                 session.getDone()->at(session.index) = false;
                 act = true;
+                delete (a);
             }
             status++;
         }
@@ -47,6 +48,7 @@ void Virus::act(Session &session)
                     session.getDone()->push_back(false);
                     session.getDone()->at(session.index) = false;
                     act = true;
+                    delete (a);
                 }
             }
             status++;
@@ -63,6 +65,7 @@ void Virus::act(Session &session)
                    session.addAgent(*a);
                    session.getDone()->push_back(false);
                    session.getDone()->at(session.index) = false;
+                   delete (a);
                }
            }
         }
@@ -93,6 +96,7 @@ void ContactTracer::act(Session &session)
             session.getGraph()->removeNodeEdges(disconnected);
             session.getDone()->at(session.index) = false;
         }
+        delete (tree);
     }
     else
         session.getDone()->at(session.index) = true;

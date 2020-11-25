@@ -23,7 +23,7 @@ public:
     Tree& operator=(Tree &&t);
 
     void updateDepthsBFS();
-    int getSizeBFS();
+    //int getSizeBFS();
 
     int getNode() const;
     int& getRank();

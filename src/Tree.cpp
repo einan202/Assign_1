@@ -2,7 +2,7 @@
 #include "../include/Tree.h"
 #include <iostream>
 using namespace std;
- /* changed pointers delete in traceTree Cycle*/
+
 //==========================Tree=========================
 
 Tree::Tree(int rootLabel): node(rootLabel), rank(0), depth(0), children() {}
@@ -18,7 +18,7 @@ void Tree::clear()
    unsigned int size = children.size();
    for(unsigned int i = 0; i < size; i++){
        if(children.at(i) != nullptr) {
-//            delete (children.at(i)); // due to treeSPLSiteTest
+            delete (children.at(i)); // due to treeSPLSiteTest
             children.at(i) = nullptr;
        }
    }
@@ -128,21 +128,20 @@ void Tree::updateDepthsBFS()
     }
 }
 
-int Tree::getSizeBFS()
-{
-    int size = 0;
-    queue<Tree*> q;
-    q.push(this);
-    while(!q.empty()){
-        Tree* curr = q.front(); q.pop();
-        unsigned int count=curr->getChildren()->size();
-        for (unsigned int i = 0; i < count; ++i)
-            q.push(curr->getChildren()->at(i));
-        size= size + 1;
-    }
-    return size;
-}
-
+//int Tree::getSizeBFS()
+//{
+//    int size = 0;
+//    queue<Tree*> q;
+//    q.push(this);
+//    while(!q.empty()){
+//        Tree* curr = q.front(); q.pop();
+//        unsigned int count=curr->getChildren()->size();
+//        for (unsigned int i = 0; i < count; ++i)
+//            q.push(curr->getChildren()->at(i));
+//        size= size + 1;
+//    }
+//    return size;
+//}
 
 Tree::Tree(const Tree &other):
      node(other.node), rank(other.rank), depth(other.depth), children()

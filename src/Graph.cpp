@@ -71,7 +71,7 @@ void Graph::removeNodeEdges(int toRemove)
 Tree *Graph::BFS(Session &s, int node)
 {
     Tree *bfsTree = Tree::createTree(s,node);
-    Tree *currT;
+    Tree *currT; Tree *child;
     vector<bool> visited (edges.size(), false);
     Graph *g=s.getGraph();
     queue<Tree*> nodes;
@@ -88,7 +88,7 @@ Tree *Graph::BFS(Session &s, int node)
              int neighbor = edges.at(currNode).at(i);
              if (neighbor != node && !visited.at(neighbor))
              {
-                 Tree *child = Tree::createTree(s, neighbor);
+                 child = Tree::createTree(s, neighbor);
                  if (currNode == node)
                      bfsTree->addChild(child);
                  else
