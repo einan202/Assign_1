@@ -7,7 +7,9 @@ include_directories(include)
 
 add_executable(Ass_1
         src/Agent.cpp
+        src/FiveRuleTester.cpp
         src/Graph.cpp
         src/main.cpp
         src/Session.cpp
+        src/Tester.cpp
         src/Tree.cpp)

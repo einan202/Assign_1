@@ -228,9 +228,17 @@ int Session::toInfect(int father)
     unsigned int fatherEdgesSize = g.getEdges().at(father).size();
     for (unsigned int i = 0; (i < fatherEdgesSize) & (toInfect == -1); ++i) {
         int neighbor = g.getEdges().at(father).at(i);
+        bool notVirus = true;
         int status = getGraph()->vecs.at(neighbor);
-        if (status == 0)
-            toInfect = neighbor;
+        if (status == 0){
+
+            for(auto& agent: agents)
+                if(agent->getVertex() == neighbor)
+                    notVirus = false;
+
+            if(notVirus)
+               toInfect = neighbor;
+        }
     }
     return toInfect;
 }

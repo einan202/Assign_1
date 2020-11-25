@@ -11,7 +11,7 @@ Agent::~Agent() {}
 
 //=================Virus===================
 
-Virus::Virus(int nodeInd) : Agent(), nodeInd(nodeInd){}
+Virus::Virus(int nodeInd): Agent(), nodeInd(nodeInd), vertex(nodeInd) {}
 
 void Virus::act(Session &session)
 {
@@ -82,9 +82,16 @@ Agent *Virus::clone() const
     return (new Virus(*this));
 }
 
+int& Virus::getVertex()
+{
+    int vert = getNodeInd();
+    int *p = &vert;
+    return *p;
+}
+
 //=================Contact Tracer===================
 
-ContactTracer::ContactTracer() : Agent() {}
+ContactTracer::ContactTracer() : Agent(), vertex(-1) {}
 
 void ContactTracer::act(Session &session)
 {
@@ -105,6 +112,13 @@ void ContactTracer::act(Session &session)
 Agent *ContactTracer::clone() const
 {
     return (new ContactTracer());
+}
+
+int& ContactTracer::getVertex()
+{
+    int vert = -1;
+    int *p = &vert;
+    return *p;
 }
 
 
