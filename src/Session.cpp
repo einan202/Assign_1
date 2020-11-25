@@ -8,7 +8,7 @@ using namespace nlohmann;
 
 Session::Session(const std::string& path):
    done(),index(0), g(vector<vector<int>>()),treeType(), agents(),
-      terminated(false),infectedNode()
+     simulateCycle(0), terminated(false),infectedNode()
 {
     std::ifstream i(path);
     json j;
@@ -49,17 +49,22 @@ void Session::simulate() {
                 check = false;
         }
 
-      if (check) {
-        int size = g.vecs.size();
-        for (int a = 0; (a < size) & (check); ++a) {
-            if(g.vecs.at(a) == 1)
-                check = false;
+        if (check) {
+            int size = g.vecs.size();
+            for (int a = 0; (a < size) & (check); ++a) {
+                if(g.vecs.at(a) == 1)
+                    check = false;
+            }
         }
-      }
-
         terminated = check;
+        simulateCycle++;
     }
     makeOutput();
+}
+
+int& Session::getSimulateCycle()
+{
+    return simulateCycle;
 }
 
 void Session::addAgent(const Agent &agent)
@@ -226,8 +231,9 @@ int Session::toInfect(int father)
 }
 
 Session::Session(const Session &other):
-   done(other.done), index(other.index), g(vector<vector<int>>()), treeType(other.treeType),
-     agents(), terminated(other.terminated), infectedNode(other.infectedNode)
+  done(other.done), index(other.index), g(vector<vector<int>>()), treeType(other.treeType),
+   agents(), simulateCycle(other.simulateCycle),
+    terminated(other.terminated), infectedNode(other.infectedNode)
 {
     g = Graph(other.g);
     unsigned count= other.agents.size();
@@ -239,7 +245,8 @@ Session::Session(const Session &other):
 
 Session::Session(Session &&other):
   done(other.done), index(other.index), g(vector<vector<int>>()), treeType(other.treeType),
-    agents(move(other.agents)), terminated(other.terminated),infectedNode(other.infectedNode)
+   agents(move(other.agents)), simulateCycle(other.simulateCycle),
+    terminated(other.terminated),infectedNode(other.infectedNode)
 {
     g = other.g;
     steal(other);

@@ -92,14 +92,14 @@ void ContactTracer::act(Session &session)
         int node=session.dequeueInfected();
         Tree *tree=session.getGraph()->BFS(session,node);
         if (tree->getRank() != 0) {
+            if(session.getTreeType() == Cycle)
+                tree->updateCyclesBFS(session.getSimulateCycle());
             int disconnected = tree->traceTree();
             session.getGraph()->removeNodeEdges(disconnected);
-            session.getDone()->at(session.index) = false;
         }
         delete (tree);
     }
-    else
-        session.getDone()->at(session.index) = true;
+    session.getDone()->at(session.index) = true;
 }
 
 Agent *ContactTracer::clone() const

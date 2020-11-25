@@ -9,7 +9,7 @@ class Tree{
 public:
     Tree(int rootLabel);
     static Tree* createTree(const Session& session, int rootLabel);
-    virtual int traceTree()=0;
+    virtual int traceTree() = 0;
     void addChild(const Tree& child);
     void addChild(Tree* child);
 
@@ -23,6 +23,8 @@ public:
     Tree& operator=(Tree &&t);
 
     void updateDepthsBFS();
+    void updateCyclesBFS(int cycle);
+    virtual int& getCurrCycle() = 0;
     //int getSizeBFS();
 
     int getNode() const;
@@ -44,7 +46,7 @@ public:
     virtual int traceTree();
     virtual Tree *clone() const;
     virtual ~CycleTree() = default;
-    int getCurrCycle() const;
+    virtual int& getCurrCycle();
 
 protected:
     int currCycle;
@@ -57,6 +59,7 @@ public:
     virtual Tree *clone() const;
     virtual ~MaxRankTree() = default;
     void updateSameRankBFS(vector<Tree*> *sameRank);
+    virtual int& getCurrCycle();
 };
 
 class RootTree: public Tree{
@@ -65,6 +68,7 @@ public:
     virtual int traceTree();
     virtual Tree *clone() const;
     virtual ~RootTree() = default;
+    virtual int& getCurrCycle();
 };
 
 #endif

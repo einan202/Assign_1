@@ -128,6 +128,28 @@ void Tree::updateDepthsBFS()
     }
 }
 
+void Tree::updateCyclesBFS(int cycle)
+{
+    queue<Tree*> q;
+    q.push(this);
+    while(!q.empty()){
+        Tree* curr = q.front(); q.pop();
+        unsigned int count = curr->getChildren()->size();
+        for(unsigned int i = 0; i < count ; ++i) {
+            Tree* child = curr->getChildren()->at(i);
+            q.push(child);
+        }
+
+        if(curr->getCurrCycle() != -1)
+            curr->getCurrCycle() = cycle;
+    }
+}
+
+int& MaxRankTree::getCurrCycle() {
+    int fakeCycle = -1;
+    return fakeCycle;
+}
+
 //int Tree::getSizeBFS()
 //{
 //    int size = 0;
@@ -166,6 +188,10 @@ int RootTree::traceTree()
     return node;
 }
 
+int& RootTree::getCurrCycle() {
+    int fakeCycle = -1;
+    return fakeCycle;
+}
 //==========================CycleTree=====================================
 
 CycleTree::CycleTree(int rootLabel, int currCycle):Tree(rootLabel),currCycle(currCycle){}
@@ -175,22 +201,22 @@ Tree * CycleTree::clone() const
     return (new CycleTree(*this));
 }
 
-int CycleTree::traceTree() {// if 0 - root, else go-left currCycle times
+int CycleTree::traceTree() {
     int output = node;
     Tree *curr = this;
-    int length = curr->getChildren()->size();
     unsigned int cycles = getCurrCycle();
-    for (unsigned int i = 0; (i < cycles) & (length != 0); ++i) {
-        output = curr->getChildren()->at(i)->getNode();
-        curr = curr->getChildren()->at(i);
-        length = curr->getChildren()->size();
+    for (unsigned int i = 0; (i < cycles) & (curr->getRank() != 0); ++i) {
+        output = curr->getChildren()->at(0)->getNode();
+        curr = curr->getChildren()->at(0);
     }
     return output;
 }
 
-    int CycleTree::getCurrCycle() const {
+
+int& CycleTree::getCurrCycle()
+{
         return currCycle;
-    }
+}
 
 //==========================MaxRankTree=====================================
 

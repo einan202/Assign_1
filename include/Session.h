@@ -34,12 +34,16 @@ public:
     TreeType getTreeType() const;
     std::vector<Agent*> getAgents();
     Graph *getGraph();
+
     std::queue<int> *getInfected(); //just for example
     std::vector<bool> *getDone();
+    int& getSimulateCycle();
     int toInfect(int node);
+
     std::vector<int> outputInfected();
     std::vector<std::vector<int>> outputGraph();
     void makeOutput();
+
     std::vector<bool>done;
     int index;
 
@@ -47,6 +51,7 @@ private:
     Graph g;
     TreeType treeType;
     std::vector<Agent*> agents;
+    int simulateCycle;
 
 protected:
     bool terminated;
