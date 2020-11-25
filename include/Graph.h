@@ -15,7 +15,7 @@ public:
     bool isInfected(int nodeInd);
 
     Graph(const Graph &other);
-    bool infectNextNode(int father);
+    //bool infectNextNode(int father);
     Tree* BFS(Session &s, int node);
     void removeNodeEdges(int toRemove);
 

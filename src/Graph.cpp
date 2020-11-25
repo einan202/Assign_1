@@ -20,7 +20,6 @@ Graph:: Graph(vector<vector<int>> matrix):
     }
 }
 
-
 void Graph::infectNode(int nodeInd)
 {
     vecs.at(nodeInd)++;
@@ -31,7 +30,7 @@ bool Graph::isInfected(int nodeInd)
     return vecs[nodeInd] != 0;
 }
 
-std::vector<std::vector<int>> Graph::getEdges() const
+vector<vector<int>> Graph::getEdges() const
 {
     return edges;
 }
@@ -54,20 +53,20 @@ void Graph::removeNodeEdges(int toRemove)
     }
 }
 
-bool Graph::infectNextNode(int father)
-{
-   bool output = false;
-   unsigned int fatherEdgesSize = edges.at(father).size();
-   for (unsigned int i = 0; (i < fatherEdgesSize) & !output; ++i) {
-        int neighbor = edges.at(father).at(i);
-        int status = vecs.at(neighbor);
-        if (status == 0) {
-            infectNode(neighbor);
-            output = true;
-        }
-   }
-   return output;
-}
+//bool Graph::infectNextNode(int father)
+//{
+//   bool output = false;
+//   unsigned int fatherEdgesSize = edges.at(father).size();
+//   for (unsigned int i = 0; (i < fatherEdgesSize) & !output; ++i) {
+//        int neighbor = edges.at(father).at(i);
+//        int status = vecs.at(neighbor);
+//        if (status == 0) {
+//            infectNode(neighbor);
+//            output = true;
+//        }
+//   }
+//   return output;
+//}
 
 Tree *Graph::BFS(Session &s, int node)
 {

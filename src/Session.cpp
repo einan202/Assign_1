@@ -44,7 +44,7 @@ void Session::simulate() {
 
         bool check = true;
         count = done.size();
-        for (int k = 0; (k < count) & check; ++k) {
+        for (int k = 0; (k < count) & (check); ++k) {
             if (!done.at(k))
                 check = false;
         }
@@ -75,7 +75,7 @@ void Session::enqueueInfected(int node)
 
 int Session::dequeueInfected()
 {
-    int output=infectedNode.front();
+    int output = infectedNode.front();
     infectedNode.pop();
     return output;
 }
@@ -112,7 +112,7 @@ Session::~Session()
 
 void Session::steal(Session &other)
 {
-    unsigned int size=agents.size();
+    unsigned int size = agents.size();
     for (unsigned int i = 0; i < size; ++i) {
         agents.at(i) = nullptr;
     }
@@ -184,8 +184,8 @@ void Session::makeOutput()
 std::vector<int> Session::outputInfected()
 {
     vector<int>output;
-    unsigned int count=g.vecs.size();
-    for (unsigned int i = 0; i <count ; ++i) {
+    unsigned int count = g.vecs.size();
+    for (unsigned int i = 0; i < count ; ++i) {
         if(g.vecs.at(i) == 2)
             output.push_back(i);
     }
@@ -216,7 +216,7 @@ int Session::toInfect(int father)
 {
     int toInfect = -1;
     unsigned int fatherEdgesSize = g.getEdges().at(father).size();
-    for (unsigned int i = 0; (i < fatherEdgesSize) & toInfect == -1; ++i) {
+    for (unsigned int i = 0; (i < fatherEdgesSize) & (toInfect == -1); ++i) {
         int neighbor = g.getEdges().at(father).at(i);
         int status = getGraph()->vecs.at(neighbor);
         if (status == 0)

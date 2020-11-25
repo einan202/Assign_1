@@ -168,6 +168,7 @@ int RootTree::traceTree()
 }
 
 //==========================CycleTree=====================================
+
 CycleTree::CycleTree(int rootLabel, int currCycle):Tree(rootLabel),currCycle(currCycle){}
 
 Tree * CycleTree::clone() const
@@ -193,13 +194,13 @@ int CycleTree::traceTree() {// if 0 - root, else go-left currCycle times
     }
 
 //==========================MaxRankTree=====================================
+
 MaxRankTree::MaxRankTree(int rootLabel):Tree(rootLabel){}
 
 Tree *MaxRankTree::clone() const
 {
         return (new MaxRankTree(*this));
 }
-
 
 void MaxRankTree::updateSameRankBFS(vector<Tree*> *sameRank)
 {
@@ -243,7 +244,4 @@ int MaxRankTree::traceTree()
         }
         return min->getNode();
     }
-//        treeSize--;
-//    }
-//    return min->getNode();
 }
