@@ -146,8 +146,9 @@ void Tree::updateCyclesBFS(int cycle)
 }
 
 int& MaxRankTree::getCurrCycle() {
-    int fakeCycle = -1;
-    return fakeCycle;
+    int i = -1;
+    int* p = &i;
+    return *p;
 }
 
 //int Tree::getSizeBFS()
@@ -189,8 +190,9 @@ int RootTree::traceTree()
 }
 
 int& RootTree::getCurrCycle() {
-    int fakeCycle = -1;
-    return fakeCycle;
+    int i = -1;
+    int* p = &i;
+    return *p;
 }
 //==========================CycleTree=====================================
 
