@@ -15,12 +15,14 @@ Session::Session(const std::string& path):
     std::ifstream i(path);
     json j;
     i >> j;
+
     g = Graph(j["graph"]);
-    if (j["tree"] == "M")
+
+    if (j["tree"].front() == "M")
         treeType = MaxRank;
-    if (j["tree"] == "C")
+    if (j["tree"].front() == "C")
         treeType = Cycle;
-    if (j["tree"] == "R")
+    if (j["tree"].front() == "R")
         treeType = Root;
 
     infectedNode = queue<int>();
